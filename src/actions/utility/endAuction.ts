@@ -9,6 +9,7 @@ import { PublicKey, TransactionSignature } from '@solana/web3.js';
 import { Wallet } from '../../wallet';
 import { Connection } from '../../Connection';
 import { sendTransaction } from '../transactions';
+import { TransactionsBatch } from '../../utils/transactions-batch';
 
 import BN from 'bn.js';
 
@@ -41,7 +42,9 @@ export const endAuction = async ({
   const auctionExtended = await AuctionExtended.getPDA(vault);
   const auctionManagerAuthority = new PublicKey(manager.data.authority)
 
-  const auctionTx: Transaction = new EndAuction(txOptions, {
+  const txBatch = new TransactionsBatch({ transactions: [] });
+
+  const auctionTx = new EndAuction(txOptions, {
     auction: auctionKey,
     store,
     auctionManager,
@@ -49,10 +52,12 @@ export const endAuction = async ({
     auctionManagerAuthority
   });
 
+  txBatch.addTransaction(auctionTx);
+
   const txId = await sendTransaction({
     connection,
-    signers: [],
-    txs: [auctionTx],
+    signers: txBatch.signers,
+    txs: txBatch.toTransactions(),
     wallet,
   });
 
