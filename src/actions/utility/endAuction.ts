@@ -8,7 +8,7 @@ import { PublicKey, TransactionSignature } from '@solana/web3.js';
 
 import { Wallet } from '../../wallet';
 import { Connection } from '../../Connection';
-import { sendTransaction } from '../../transactions';
+import { sendTransaction } from '../transactions';
 
 import BN from 'bn.js';
 
